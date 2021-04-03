@@ -27,6 +27,14 @@ cli = musicpd.MPDClient()
 seen_nones = 0
 playing = False
 
+def playlist_name(id, text):
+	"""Determine the name of the playlist for the given NFC tag."""
+
+	if text:
+		return text.rstrip()
+
+	return "%X" % id
+
 # Main loop; wait for NFC events and react accordingly.
 while True:
 	(id, text) = reader.read_no_block()
@@ -49,7 +57,7 @@ while True:
 			logging.debug('Seen no NFC card %d times in a row', seen_nones)
 	elif id != last_seen_tag_id:
 		# New NFC tag found; load the playlist matching the text of the tag.
-		playlist = text.rstrip()
+		playlist = playlist_name(id, text)
 		cli.connect()
 		try:
 			cli.clear()
