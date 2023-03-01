@@ -36,8 +36,6 @@ except FileNotFoundError:
 
 reader = SimpleMFRC522()
 cli = musicpd.MPDClient()
-if password is not None:
-	cli.pwd = password
 seen_nones = 0
 playing = False
 
@@ -58,6 +56,8 @@ while True:
 			logging.debug('Seen no NFC card %d times in a row, stopping playback',
 						  seen_nones)
 			cli.connect()
+			if password is not None:
+				cli.password(password)
 			cli.pause()
 			cli.disconnect()
 			playing = False
@@ -73,6 +73,8 @@ while True:
 		# New NFC tag found; load the playlist matching the text of the tag.
 		playlist = playlist_name(id, text)
 		cli.connect()
+		if password is not None:
+			cli.password(password)
 		try:
 			cli.clear()
 			try:
@@ -93,6 +95,8 @@ while True:
 		# Same tag found again, but we paused playback above; resume
 		# playback from the previous position.
 		cli.connect()
+		if password is not None:
+			cli.password(password)
 		try:
 			cli.play()
 			playing = True
