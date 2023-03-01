@@ -61,7 +61,12 @@ while True:
 		cli.connect()
 		try:
 			cli.clear()
-			cli.load(playlist)
+			try:
+				cli.load(playlist + "[[s]]")
+				cli.shuffle()
+			except musicpd.CommandError:
+				cli.load(playlist)
+
 			cli.play()
 			logging.info('Loaded playlist %s', playlist)
 			playing = True
