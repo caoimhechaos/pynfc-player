@@ -10,8 +10,11 @@ import time
 argparser = argparse.ArgumentParser()
 argparser.add_argument('-l', '--loglevel',
 	help='Level of logging that should be passed to stdout (e.g. DEBUG, INFO)')
+argparser.add_argument('-pw', '--password', type=str,
+	help='optional filepath for a file containing a mpd password')
 args = argparser.parse_args()
 loglevel = args.loglevel.upper() if args.loglevel else ''
+pass_file = args.password
 
 numeric_loglevel = getattr(logging, loglevel.upper(), None)
 if not isinstance(numeric_loglevel, int):
@@ -22,8 +25,19 @@ logging.captureWarnings(True)
 
 last_seen_tag_id = None
 
+# Reads password file if one was specified on the command line.
+try:
+	if pass_file is None:
+		raise FileNotFoundError
+	with open(pass_file, 'r') as f:
+		password = f.read().strip()
+except FileNotFoundError:
+	password = None
+
 reader = SimpleMFRC522()
 cli = musicpd.MPDClient()
+if password is not None:
+	cli.pwd = password
 seen_nones = 0
 playing = False
 
