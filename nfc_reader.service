@@ -4,7 +4,7 @@ After=network.target sound.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/nfc_reader.py -l INFO
+ExecStart=/usr/local/bin/nfc_reader.py -l INFO --password=/etc/mpd.password
 
 # disallow writing to /usr, /bin, /sbin, ...
 ProtectSystem=yes
